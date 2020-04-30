@@ -40,8 +40,9 @@ namespace isadt
         std::string generateMain(Process* proc);
         std::string generateGuardVarsDef(Process* proc);
         std::string generateSMLoop(Process* proc);
-        std::string generateStateBehavior(StateMachine* sm)
-        
+        std::string generateStateBehavior(StateMachine* sm);
+        /*------------UserType------------*/
+        std::string CCodeGenerator::generateUserTypes(std::string path, Model* model);
         /*---------Gen---------*/
         void generateCode(std::string path, Process* proc);
 

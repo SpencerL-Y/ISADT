@@ -1,6 +1,7 @@
 #include "CCodeGenerator.h"
 #define INCLUDE_HEADER "#include <stdio.h>\n#include <pthread.h>\n#include <uinstd.h>\n#include <stdlib.h>\n"
 #define LOCAL_INCLUDE "#include \"request.h\" \n#include \"syncchannel.h\"\n#include \"request_manager.h\"\n#include \"debug.h\"\n#include \"defs.h\"\n#include \"mytimelib.h\"\n#include \"random.h\"\n#include \"tracemanager.h\"\n#include \"main.h\""
+#define REAL_INCLUDE ""
 #define CR "\n"
 #define TAB "\t"
 namespace isadt{
@@ -273,7 +274,7 @@ namespace isadt{
 			std::string outStr = "";
 			outStr += "while(__currentState != STATE__STOP__STATE) {\n";
 			outStr += "\tswitch(__currentState){\n";
-			
+			outStr += this->generateStateBehavior(proc->getStateMachines());
 			outStr += "\t\tdefault: break;\n";
 			outStr += "\t}\n";
 			outStr += "}\n";
@@ -282,13 +283,40 @@ namespace isadt{
 
 		std::string CCodeGenerator::generateStateBehavior(StateMachine* sm)
 		{
-			
+			std::string casesBody;
+			std::string caseTab = "\t\t";
+			std::string caseBodyTab = "\t\t\t";
+			for(Vertex* v : sm->getVertices()){
+				casesBody += (caseTab + "STATE__" + v->getName() + ":") + CR;
+				bool elseIf = false;
+				for(Edge* e : sm->getEdges){
+					if(e->getFromVertex() == v){
+						// if the edge starts from v
+						// makesure Make sure guard to string method
+						casesBody += (caseBodyTab + (elseIf ? "else if(" : "if(") + e->getGuard()->to_stirng() + "){") + CR;
+						elseIf = true;
+						for(Action* a : e->getActions()){
+							casesBody += TAB + (caseBodyTab + a->to_stirng() + ";") + CR;
+						}
+						casesBody += (caseBodyTab + "}") + CR;
+					}
+				}
+			}
 		}
         /*-------------Generate UserTypes-------------*/
 		
-		std::string CCodeGenerator::generateUserTypes(Model* model)
+		std::string CCodeGenerator::generateUserTypes(std::string path, Model* model)
 		{
+			std::ofstream outUserTypeFile;
+		    //TODO: make sure here
+		    std::string fileName = "UserType.h";
+		    std::string outStr = "";
 
+
+
+			outUserTypeFile.open(path + ".\\" + fileName);
+			outUserTypeFile << outStr << std::endl;
+			outUserTypeFile.close();
 		}
 
 		/*---------Gen---------*/

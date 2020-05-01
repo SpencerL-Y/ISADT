@@ -231,28 +231,39 @@ namespace isadt{
 			for (Method* m : proc->getMethods())
 			{
 				// make sure here, add marker for methods
-
-				std::string rttStr =  m->getReturnType()->getName();
-				std::string classNamespace = proc->getProcName() + "::";
-				std::string methodName = m->getName();
-				std::string attrStr = "(";
-				int i = 1;
-				for (Attribute* a : m->getParameters()) 
+				if(m->isCommMethod())
 				{
-					std::string termStr = a->getType()->getName() + " " + a->getIdentifier();
-					attrStr += termStr;
-					if (i < m->getParameters().size()) 
+					//TODO: add comm method lib and use interfaces here
+				} 
+				else if(m->isEncryptDecryptMethod())
+				{
+					//TODO: add en/decrypt lib and use interfaces here
+				} 
+				else 
+				{
+					std::string rttStr =  m->getReturnType()->getName();
+					std::string classNamespace = proc->getProcName() + "::";
+					std::string methodName = m->getName();
+					std::string attrStr = "(";
+					int i = 1;
+					for (Attribute* a : m->getParameters()) 
 					{
-						attrStr += ", ";
+						std::string termStr = a->getType()->getName() + " " + a->getIdentifier();
+						attrStr += termStr;
+						if (i < m->getParameters().size()) 
+						{
+							attrStr += ", ";
+						}
+						i++;
 					}
-					i++;
+					attrStr += ")";
+					std::string methodDef = rttStr + " " + classNamespace + methodName + attrStr;
+					std::string returnVal = rttStr + " result;" + CR;
+					std::string ret = "return result;\n";
+					std::string methodBody = "{\n" + returnVal + ret + "；\n}\n";
+			
+					}
 				}
-				attrStr += ")";
-				std::string methodDef = rttStr + " " + classNamespace + methodName + attrStr;
-				std::string returnVal = rttStr + " result;" + CR;
-				std::string ret = "return result;\n";
-				std::string methodBody = "{\n" + returnVal + ret + "；\n}\n";
-			}
 		}
 
         std::string  CCodeGenerator::generateMain(Process* proc)
@@ -260,11 +271,9 @@ namespace isadt{
 			std::string outStr = "";
 			// current state 
 			outStr += "int __currentState = STATE__START__STATE";
-			// global variables
-			// guards
-
+			
 			outStr += "int main(int argc, char** argv) {\n";
-		
+			outStr += generateSMLoop(proc);
 			outStr += "}\n";
 		}
 
@@ -274,7 +283,9 @@ namespace isadt{
 			std::string outStr = "";
 			outStr += "while(__currentState != STATE__STOP__STATE) {\n";
 			outStr += "\tswitch(__currentState){\n";
-			outStr += this->generateStateBehavior(proc->getStateMachines());
+			//make sure that start state is included
+			//TODO
+			outStr += this->generateStateBehavior((StateMachine *)proc->getStateMachines());
 			outStr += "\t\tdefault: break;\n";
 			outStr += "\t}\n";
 			outStr += "}\n";
@@ -311,16 +322,24 @@ namespace isadt{
 		    //TODO: make sure here
 		    std::string fileName = "UserType.h";
 		    std::string outStr = "";
-
-
-
+			for(UserType* u : model->getUserTypes()){
+				//make sure 
+				outStr += ("class " + u->getName() + "{") + CR;
+				outStr += "\tpublic:\n";
+				for(Attribute* a : u->getParameters()){
+					outStr += "\t\t" + (a->getType()->getName() + " " + a->getIdentifier()) + "\n";
+				}
+				outStr += "}\n";
+			}
 			outUserTypeFile.open(path + ".\\" + fileName);
 			outUserTypeFile << outStr << std::endl;
 			outUserTypeFile.close();
 		}
 
 		/*---------Gen---------*/
-        void  CCodeGenerator::generateCode(std::string path, Process* proc);
+        void  CCodeGenerator::generateCode(std::string path, Process* proc){
+			
+		}
 
         //constructors
          CCodeGenerator::CCodeGenerator(/*args*/)

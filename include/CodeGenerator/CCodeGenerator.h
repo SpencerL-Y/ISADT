@@ -10,6 +10,7 @@
 #include "ImpleCodeGenerator.h"
 #include "Plugin.h"
 #include "Process.hpp"
+#include "UserType.hpp"
 namespace isadt 
 {
     class CCodeGenerator : public ImpleCodeGenerator 

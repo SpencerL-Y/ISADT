@@ -29,21 +29,30 @@ namespace isadt {
         Attribute* mkAttribute(Type* type, const string& name);
         Method* mkMethod(const string& name, Type* returnType, list<Attribute*> parameters);
         CommMethod* mkCommMethod(const string& name, bool inout, Attribute* parameter);
-        StateMachine* mkFst();
+        
+        StateMachine* mkFst(){
+            StateMachine* sm = new StateMachine();
+        }
 
-        list<Attribute*> getAttributes(){
+        const list<Attribute*>& getAttributes()const{
             return this->attributes_;
         }
-        std::string getProcName(){
+
+        const std::string& getProcName(){
             return this->procName_;
         }
-        list<Method*> getMethods(){
+
+        void setProcName(std::string procName){
+            this->procName_ = procName;
+        }
+
+        const list<Method*>& getMethods() const{
             return this->methods_;
         }
-        list<CommMethod*> getCommMethods(){
+        const list<CommMethod*>& getCommMethods() const {
             return this->commMethods_;
         }
-        StateMachine* getStateMachine(){
+        const StateMachine* getStateMachine(){
             return &(this->statemachine_);
         }
     private:

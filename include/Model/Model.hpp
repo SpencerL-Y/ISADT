@@ -23,6 +23,18 @@ namespace isadt {
         }
 
         Process* mkProcess();
+        Process* mkProcess(std::string procName){
+            for(Process* p : this->processes_){
+                if(!procName.compare(p->getProcName())){
+                    std::cout << "Process Exists" << std::endl;
+                    return NULL;
+                }
+            }
+            Process* p = new Process(this);
+            p->setProcName(procName);
+            this->processes_.push_front(p);
+            return p;
+        }
 
         ConfidentialProperty*
         mkConfidentialProperty(Process* process, Attribute* attribute);
@@ -34,6 +46,10 @@ namespace isadt {
         InitialKnowledge* 
         mkInitialKnowledge(Process* process, Attribute* attribute);
         
+        const list<Process*>& getProcesses() const{
+            return this->processes_;
+        }
+
         list<UserType*> getUserTypes();
     private:
         list<Process*> processes_;

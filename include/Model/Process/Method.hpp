@@ -38,10 +38,16 @@ namespace isadt {
         const string& getName() const;
         void setName(const string& name) ;
 
-        Type* getReturnType() const ;
-        void setReturnType(Type* returnType);
+        Type* getReturnType() const{
+            return this->returnType_;
+        }
+        void setReturnType(Type* returnType){
+            this->returnType_ = returnType;
+        }
 
-        const list<Attribute*>& getParamters() const;
+        const list<Attribute*>& getParameters() const{
+            return this->parameters_;
+        }
         void setParameters(const list<Attribute*>& parameters);
 
         const string& getAlgorithmId() const;
@@ -51,18 +57,9 @@ namespace isadt {
         void setUserCode(const string& userCode);
 
 
-        std::string getName(){
+        const string& getName(){
             return this->name_;
         }
-
-        Type* getReturnType(){
-            return this->returnType_;
-        }
-
-        list<Attribute*> getParameters(){
-            return this->parameters_;
-        }
-
     private:
         string name_;                    //< the method name.
         Type* returnType_;               //< the return data type.

@@ -16,15 +16,24 @@ namespace isadt {
 
     /// \brief StateMachine class
 	class StateMachine {
+
 	public:
-		const std::list<Vertex*>& getVertices() const;
-		const std::list<Edge*> & getEdges() const;
-		Vertex * getStartVertex();
+		Vertex* getStartVertex(){
+			return this->startVertex_;
+		}
+
+		std::list<Vertex *> getVertices(){
+			return this->vertices_;
+		}
+
+		std::list<Edge*> getEdges(){
+			return this->edges_;
+		}
 	private:
-    	std::list<Vertex*> vertices;    //< the set of the states of this fsm.
-    	std::list<Edge*> edges;         //< the set of the transitions of this fsm.
-    	Vertex* startVertex;            //< record the start state of this fsm.
-    	Process* process;               //< the StateMachine belongs to the process.
+    	std::list<Vertex*> vertices_;    //< the set of the states of this fsm.
+    	std::list<Edge*> edges_;         //< the set of the transitions of this fsm.
+    	Vertex* startVertex_;            //< record the start state of this fsm.
+    	Process* process_;               //< the StateMachine belongs to the process.
 	};
 }
 #endif /* Model_StateMachine_hpp */

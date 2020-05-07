@@ -18,30 +18,42 @@ namespace isadt {
     class Process {
     public:
         Process();
-        Process(Model* _model);
+        Process(Model* model);
         ~Process() {
             //delete attributes, methods, signals and fst.
         }
 
         Model* getModel() const;
-        void setModel(Model* _model);
+        void setModel(Model* model);
 
         Attribute* mkAttribute(Type* type, const string& name);
-        Method* mkMethod(const string& _name, Type* _returnType, list<Attribute*> _parameters);
-        CommMethod* mkCommMethod(const string& _name, bool _inout, Attribute* _parameter);
+        Method* mkMethod(const string& name, Type* returnType, list<Attribute*> parameters);
+        CommMethod* mkCommMethod(const string& name, bool inout, Attribute* parameter);
         StateMachine* mkFst();
-        //NEW 
-        std::string& getProcName();
-        const list<Attribute*>& getAttributes() const;
-        const list<Method*>& getMethods() const;
-        const list<CommMethod*> getCommMethods() const ;
-        const StateMachine* getStateMachines() const;
+
+        list<Attribute*> getAttributes(){
+            return this->attributes_;
+        }
+        std::string getProcName(){
+            return this->procName_;
+        }
+        list<Method*> getMethods(){
+            return this->methods_;
+        }
+        list<CommMethod*> getCommMethods(){
+            return this->commMethods_;
+        }
+        StateMachine* getStateMachine(){
+            return &(this->statemachine_);
+        }
     private:
-        list<Attribute*> attributes;        ///< the attributes for this process.
-        list<Method*> methods;              ///< the methods for this process.
-        list<CommMethod*> commMethods;      ///< the communication methods for this process.
-        StateMachine* statemachines;  ///< the finite state machines for this process.
-        Model* model;                       ///< the model this process from.
+        std::string procName_;
+        list<Attribute*> attributes_;        ///< the attributes for this process.
+        list<Method*> methods_;              ///< the methods for this process.
+        list<CommMethod*> commMethods_;      ///< the communication methods for this process.
+        list<StateMachine*> statemachines_;  ///< the finite state machines for this process.
+        StateMachine statemachine_;
+        Model* model_;                       ///< the model this process from.
     };
 }
 

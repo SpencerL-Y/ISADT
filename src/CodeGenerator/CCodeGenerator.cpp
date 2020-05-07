@@ -1,4 +1,4 @@
-#include "CCodeGenerator.h"
+#include "CodeGenerator/CCodeGenerator.hpp"
 #define INCLUDE_HEADER "#include <stdio.h>\n#include <pthread.h>\n#include <uinstd.h>\n#include <stdlib.h>\n"
 #define LOCAL_INCLUDE "#include \"request.h\" \n#include \"syncchannel.h\"\n#include \"request_manager.h\"\n#include \"debug.h\"\n#include \"defs.h\"\n#include \"mytimelib.h\"\n#include \"random.h\"\n#include \"tracemanager.h\"\n#include \"main.h\""
 #define REAL_INCLUDE ""
@@ -208,7 +208,7 @@ namespace isadt{
             std::string defs = "";
 		    defs += "#define STATE__START__STATE 0\n";
 		    int i = 1;
-		    for (Vertex* v : proc->getStateMachines()->getVertices()) 
+		    for (Vertex* v : proc->getStateMachine()->getVertices()) 
 			{
 		    	//TODO: refine the state definition later
 		    	defs += "#define STATE__" + v->getName() + " " + std::to_string(i) + CR;
@@ -227,46 +227,45 @@ namespace isadt{
 		}
 
         std::string  CCodeGenerator::generateSrcMethods(Process* proc)
-		{
+		{		
+			std::string outStr = "";
 			for (Method* m : proc->getMethods())
 			{
+				
 				// make sure here, add marker for methods
-				if(m->isCommMethod())
-				{
-					//TODO: add comm method lib and use interfaces here
-				} 
-				else if(m->isEncryptDecryptMethod())
-				{
-					//TODO: add en/decrypt lib and use interfaces here
-				} 
-				else 
-				{
-					std::string rttStr =  m->getReturnType()->getName();
-					std::string classNamespace = proc->getProcName() + "::";
-					std::string methodName = m->getName();
-					std::string attrStr = "(";
-					int i = 1;
-					for (Attribute* a : m->getParameters()) 
-					{
-						std::string termStr = a->getType()->getName() + " " + a->getIdentifier();
-						attrStr += termStr;
-						if (i < m->getParameters().size()) 
-						{
-							attrStr += ", ";
-						}
-						i++;
-					}
-					attrStr += ")";
-					std::string methodDef = rttStr + " " + classNamespace + methodName + attrStr;
-					std::string returnVal = rttStr + " result;" + CR;
-					std::string ret = "return result;\n";
-					std::string methodBody = "{\n" + returnVal + ret + "；\n}\n";
+				
+				//TODO: add comm method lib and use interfaces here
 			
+				
+				//TODO: add en/decrypt lib and use interfaces here
+				
+				std::string rttStr =  m->getReturnType()->getName();
+				std::string classNamespace = proc->getProcName() + "::";
+				std::string methodName = m->getName();
+				std::string attrStr = "(";
+				int i = 1;
+				for (Attribute* a : m->getParameters()) 
+				{
+					std::string termStr = a->getType()->getName() + " " + a->getIdentifier();
+					attrStr += termStr;
+					if (i < m->getParameters().size()) 
+					{
+						attrStr += ", ";
 					}
+					i++;
 				}
+				attrStr += ")";
+				std::string methodDef = rttStr + " " + classNamespace + methodName + attrStr;
+				std::string returnVal = rttStr + " result;" + CR;
+				std::string ret = "return result;\n";
+				std::string methodBody = "{\n" + returnVal + ret + "；\n}\n";
+				outStr += (methodDef + methodBody);
+				
+			}
+			return outStr;
 		}
 
-        std::string  CCodeGenerator::generateMain(Process* proc)
+        std::string CCodeGenerator::generateMain(Process* proc)
 		{
 			std::string outStr = "";
 			// current state 
@@ -285,7 +284,7 @@ namespace isadt{
 			outStr += "\tswitch(__currentState){\n";
 			//make sure that start state is included
 			//TODO
-			outStr += this->generateStateBehavior((StateMachine *)proc->getStateMachines());
+			outStr += this->generateStateBehavior((StateMachine *)proc->getStateMachine());
 			outStr += "\t\tdefault: break;\n";
 			outStr += "\t}\n";
 			outStr += "}\n";
@@ -300,7 +299,7 @@ namespace isadt{
 			for(Vertex* v : sm->getVertices()){
 				casesBody += (caseTab + "STATE__" + v->getName() + ":") + CR;
 				bool elseIf = false;
-				for(Edge* e : sm->getEdges){
+				for(Edge* e : sm->getEdges()){
 					if(e->getFromVertex() == v){
 						// if the edge starts from v
 						// makesure Make sure guard to string method

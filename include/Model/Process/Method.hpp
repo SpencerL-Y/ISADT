@@ -14,35 +14,61 @@ using std::list;
 namespace isadt {
     /// \brief the method of process.
     class Method {
-        public:
-           Method()
-               : returnType(nullptr) {}
+    public:
+        Method()
+            : returnType_(nullptr) {}
 
-           Method(const string& _name, Type* _returnType, list<Attribute*> _parameters)
-               : name(_name),
-                 returnType(_returnType),
-                 parameters(_parameters) {}
+        Method(const string& name, 
+               Type* returnType, 
+               const list<Attribute*>& parameters,
+               const string& algorithmId,
+               const string& userCode)
+            : name_(name),
+              returnType_(returnType),
+              parameters_(parameters),
+              algorithmId_(algorithmId),
+              userCode_(userCode) {}
 
-           ~Method() {
-               for (auto p : parameters) {
-                   delete p;
-               }
-           }
+        ~Method() {
+            for (auto p : parameters_) {
+                delete p;
+            }
+        }
 
-           const string& getName() const;
-           void setName(const string& _name) ;
+        const string& getName() const;
+        void setName(const string& name) ;
 
-           Type* getReturnType() const ;
-           void setReturnType(Type* _returnType);
+        Type* getReturnType() const ;
+        void setReturnType(Type* returnType);
 
-           const list<Attribute*>& getParameters() const;
-           void setParameters(const list<Attribute*>& _parameters);
-       private:
-           string name;                    //< the method name.
-           Type* returnType;               //< the return data type.
-           list<Attribute*> parameters;    //< the parameters.
-           string algorismId;
-           string userCode;
+        const list<Attribute*>& getParamters() const;
+        void setParameters(const list<Attribute*>& parameters);
+
+        const string& getAlgorithmId() const;
+        void setAlgorithmId(const string& algorithmId);
+
+        const string& getUserCode() const;
+        void setUserCode(const string& userCode);
+
+
+        std::string getName(){
+            return this->name_;
+        }
+
+        Type* getReturnType(){
+            return this->returnType_;
+        }
+
+        list<Attribute*> getParameters(){
+            return this->parameters_;
+        }
+
+    private:
+        string name_;                    //< the method name.
+        Type* returnType_;               //< the return data type.
+        list<Attribute*> parameters_;    //< the parameters.
+        string algorithmId_;             //< the algorithm identifier. encryption and decryption: not null ==> .
+        string userCode_;                //< the user insertion code.
     };
 }
 

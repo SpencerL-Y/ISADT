@@ -11,7 +11,7 @@
 #include "../StateMachine/Term/Term.hpp"
 using std::string;
 
-namespace isadt{
+namespace isadt {
     class SdEdge;
     class Process;
 

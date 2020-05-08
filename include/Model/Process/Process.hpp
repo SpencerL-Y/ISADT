@@ -9,6 +9,7 @@
 #define Model_Process_hpp 
 #include "Method.hpp"
 #include "CommMethod.hpp"
+#include "Attribute.hpp"
 #include "../StateMachine/StateMachine.hpp"
 
 namespace isadt {
@@ -19,9 +20,7 @@ namespace isadt {
     public:
         Process();
         Process(Model* model);
-        ~Process() {
-            //delete attributes, methods, signals and fst.
-        }
+        ~Process();
 
         Model* getModel() const;
         void setModel(Model* model);
@@ -30,38 +29,24 @@ namespace isadt {
         Method* mkMethod(const string& name, Type* returnType, list<Attribute*> parameters);
         CommMethod* mkCommMethod(const string& name, bool inout, Attribute* parameter);
         
-        StateMachine* mkFst(){
-            StateMachine* sm = new StateMachine();
-        }
+        StateMachine* mkFst();
 
-        const list<Attribute*>& getAttributes()const{
-            return this->attributes_;
-        }
+        const list<Attribute*>& getAttributes();
 
-        const std::string& getProcName(){
-            return this->procName_;
-        }
+        const std::string& getProcName();
 
-        void setProcName(std::string procName){
-            this->procName_ = procName;
-        }
+        void setProcName(std::string procName);
 
-        const list<Method*>& getMethods() const{
-            return this->methods_;
-        }
-        const list<CommMethod*>& getCommMethods() const {
-            return this->commMethods_;
-        }
-        const StateMachine* getStateMachine(){
-            return &(this->statemachine_);
-        }
+        const list<Method*>& getMethods() const;
+        const list<CommMethod*>& getCommMethods() const;
+        const StateMachine* getStateMachine();
     private:
         std::string procName_;
         list<Attribute*> attributes_;        ///< the attributes for this process.
         list<Method*> methods_;              ///< the methods for this process.
         list<CommMethod*> commMethods_;      ///< the communication methods for this process.
-        list<StateMachine*> statemachines_;  ///< the finite state machines for this process.
-        StateMachine statemachine_;
+        //list<StateMachine*> statemachines_;  ///< the finite state machines for this process.
+        StateMachine* statemachine_;
         Model* model_;                       ///< the model this process from.
     };
 }

@@ -330,14 +330,16 @@ namespace isadt{
 				}
 				outStr += "}\n";
 			}
-			outUserTypeFile.open(path + ".\\" + fileName);
+			outUserTypeFile.open(path + "\\" + fileName);
 			outUserTypeFile << outStr << std::endl;
 			outUserTypeFile.close();
 		}
 
 		/*---------Gen---------*/
         void  CCodeGenerator::generateCode(std::string path, Process* proc){
-			
+			this->generateHeaderFile(path, proc);
+			this->generateSrcFile(path, proc);
+			//TODO: this->generateUserTypes(path, proc);
 		}
 
         //constructors

@@ -18,23 +18,10 @@ namespace isadt {
     class Model {
     public:
         Model();
-        ~Model() {
-            //delete processes, properties, initialknowledges.
-        }
+        ~Model();
 
         Process* mkProcess();
-        Process* mkProcess(std::string procName){
-            for(Process* p : this->processes_){
-                if(!procName.compare(p->getProcName())){
-                    std::cout << "Process Exists" << std::endl;
-                    return NULL;
-                }
-            }
-            Process* p = new Process(this);
-            p->setProcName(procName);
-            this->processes_.push_front(p);
-            return p;
-        }
+        Process* mkProcess(std::string procName);
 
         ConfidentialProperty*
         mkConfidentialProperty(Process* process, Attribute* attribute);
@@ -46,9 +33,7 @@ namespace isadt {
         InitialKnowledge* 
         mkInitialKnowledge(Process* process, Attribute* attribute);
         
-        const list<Process*>& getProcesses() const{
-            return this->processes_;
-        }
+        const list<Process*>& getProcesses() const;
 
         list<UserType*> getUserTypes();
     private:

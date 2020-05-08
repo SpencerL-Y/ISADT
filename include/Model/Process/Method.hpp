@@ -15,39 +15,23 @@ namespace isadt {
     /// \brief the method of process.
     class Method {
     public:
-        Method()
-            : returnType_(nullptr) {}
+        Method();
 
         Method(const string& name, 
                Type* returnType, 
                const list<Attribute*>& parameters,
                const string& algorithmId,
-               const string& userCode)
-            : name_(name),
-              returnType_(returnType),
-              parameters_(parameters),
-              algorithmId_(algorithmId),
-              userCode_(userCode) {}
+               const string& userCode);
 
-        ~Method() {
-            for (auto p : parameters_) {
-                delete p;
-            }
-        }
+        ~Method();
 
         const string& getName() const;
         void setName(const string& name) ;
 
-        Type* getReturnType() const{
-            return this->returnType_;
-        }
-        void setReturnType(Type* returnType){
-            this->returnType_ = returnType;
-        }
+        Type* getReturnType() const;
+        void setReturnType(Type* returnType);
 
-        const list<Attribute*>& getParameters() const{
-            return this->parameters_;
-        }
+        const list<Attribute*>& getParameters() const;
         void setParameters(const list<Attribute*>& parameters);
 
         const string& getAlgorithmId() const;
@@ -57,9 +41,7 @@ namespace isadt {
         void setUserCode(const string& userCode);
 
 
-        const string& getName(){
-            return this->name_;
-        }
+        const string& getName();
     private:
         string name_;                    //< the method name.
         Type* returnType_;               //< the return data type.

@@ -18,46 +18,21 @@ namespace isadt {
 	class StateMachine {
 	public:
 		StateMachine();
-		StateMachine(Process* p){
-			this->process_ = p;
-		}
-		~StateMachine(){
+		StateMachine(Process* p);
+		~StateMachine();
+		void mkStartVertex(std::string name);
+		Vertex* getVertexByName(std::string name);
 
-		}
-		void mkStartVertex(std::string name){
-			if(this->startVertex_ != nullptr){
-				std::cout << "startVertex exist" << std::endl;
-				return;
-			}
-			for(Vertex * v : this->getVertices()){
-				if(!v->getName().compare(name)){
-					std::cout << "vertex name exists" << std::endl;
-				}
-			}
-			Vertex * vertex = new Vertex(name);
-			this->startVertex_ = vertex;
-			this->vertices_.push_front(vertex);
-		}
+		const Vertex* getStartVertex();
 
-		const Vertex* getStartVertex(){
-			return this->startVertex_;
-		}
+		const std::list<Vertex *>& getVertices() const;
 
-		const std::list<Vertex *>& getVertices() const{
-			return this->vertices_;
-		}
+		const std::list<Edge*>& getEdges() const;
+		void addVertex(std::string name);
 
-		const std::list<Edge*>& getEdges() const{
-			return this->edges_;
-		}
+		void delVertex(std::string name);
 
-		void addVertex(){
-
-		}
-
-		void addEdge(){
-
-		}
+		void addEdge(Edge* edge);
 
 	private:
     	std::list<Vertex*> vertices_;    //< the set of the states of this fsm.

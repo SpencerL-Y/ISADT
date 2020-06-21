@@ -12,7 +12,8 @@
 #include "Pragma/Property.hpp"
 #include "Pragma/InitialKnowledge.hpp"
 #include "SequenceDiagram/SequenceDiagram.hpp"
-
+#include "Pragma/Axiom.hpp"
+#include "Channel/Channel.hpp"
 namespace isadt {
     /// \brief the model in isadt.
     class Model {
@@ -41,7 +42,11 @@ namespace isadt {
         list<Property*> properties_;
         list<InitialKnowledge*> initialKnowledges_;
         list<UserType*> userTypes_;
-        SequenceDiagram* sd_;
+        //list<SequenceDiagram*> sd_;
+        list<Axiom*> axioms;
+        list<Channel*> channels;
+        // ProcMethodPair * 2, bool privacy
+
     };
 }
 

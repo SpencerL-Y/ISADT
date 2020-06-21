@@ -38,6 +38,7 @@ namespace isadt {
     	std::list<Vertex*> vertices_;    //< the set of the states of this fsm.
     	std::list<Edge*> edges_;         //< the set of the transitions of this fsm.
     	Vertex* startVertex_;            //< record the start state of this fsm.
+		list<Vertex*> endVertices_;
     	Process* process_;               //< the StateMachine belongs to the process.
 	};
 }

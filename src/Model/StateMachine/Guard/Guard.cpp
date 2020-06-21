@@ -17,7 +17,8 @@ namespace isadt {
     void Guard::setGuardExpression(Expression* expression){
 
     }
-    string Guard::to_stirng() const{
-
+    string Guard::to_string() const{
+        //TODO  for testing remove later
+        return "true";
     }
 }

@@ -31,6 +31,15 @@ namespace isadt {
     string xml_;
 
   };
+
+  class atomicExpression : Expression{
+    private:
+      Term* termA_;
+      Term* termB_;
+      bool isSingleTerm_;
+      string binaryOp_;
+      string xml_;
+  };
 }
 
 #endif /* Model_Expression_hpp */

@@ -1,6 +1,6 @@
 #include "CodeGenerator/CCodeGenerator.hpp"
-#define INCLUDE_HEADER "#include <stdio.h>\n#include <pthread.h>\n#include <uinstd.h>\n#include <stdlib.h>\n"
-#define LOCAL_INCLUDE "#include \"request.h\" \n#include \"syncchannel.h\"\n#include \"request_manager.h\"\n#include \"debug.h\"\n#include \"defs.h\"\n#include \"mytimelib.h\"\n#include \"random.h\"\n#include \"tracemanager.h\"\n#include \"main.h\""
+#define INCLUDE_HEADER "#include <stdio.h>\n#include <thread>\n#include <uinstd.h>\n#include <stdlib.h>\n"
+#define LOCAL_INCLUDE ""
 #define REAL_INCLUDE ""
 #define CR "\n"
 #define TAB "\t"
@@ -84,25 +84,25 @@ namespace isadt{
 		    outStr += this->generateDependIncludes(proc);
 		    // generate attrs and methods declaration
 		    // attrs
-			this->generateClassPre(proc);
+			outStr += this->generateClassPre(proc);
 		    for (Attribute* attr : proc->getAttributes()) {
-		    	outStr = TAB + this->appendAttrDef(outStr, attr);
+		    	outStr += TAB + this->appendAttrDef(outStr, attr);
 		    }
-			outStr += "public: \n";
+			outStr += "\tpublic: \n";
 		    // getters and setters
 		    for (Attribute* attr : proc->getAttributes()) {
-		    	outStr = TAB + this->appendGetterAndSetter(outStr, attr);
+		    	outStr += TAB + this->appendGetterAndSetter(outStr, attr);
 		    }
 		    // methods
 		    for (Method* m : proc->getMethods()) {
-		    	outStr = TAB + this->appendMethodDeclaration(outStr, m);
+		    	outStr += TAB + this->appendMethodDeclaration(outStr, m);
 		    }
-			outStr += "}\n";
+			outStr += "};\n";
 
 		    //endif
 		    outStr += "#endif\n";
-
-		    outHeadFile.open(path + "\\generatedHeader" + "\\" + tempFileName, std::ofstream::app | std::ostream::out);
+			std::cout << outStr << std::endl;
+		    outHeadFile.open(path + "/generatedHeader" + "/" + tempFileName, std::ofstream::out | std::ostream::out);
 		    outHeadFile << outStr << std::endl;
 		    outHeadFile.close();
         }
@@ -116,7 +116,7 @@ namespace isadt{
         std::string  CCodeGenerator::generateCommonIncludes()
         {
             std::string commonIncludes =
-			"#include <iostream>\n#include <string>\n#include <vector>";
+			"#include <iostream>\n#include <string>\n#include <vector>\n";
 		    commonIncludes += INCLUDE_HEADER;
 		    return commonIncludes;
         }
@@ -148,7 +148,7 @@ namespace isadt{
         std::string  CCodeGenerator::appendAttrDef(std::string inStr, Attribute* attr)
         {
             std::string result = CR;
-		    result += attr->getType()->getName() + " " + attr->getIdentifier() + CR;
+		    result += attr->getType()->getName() + " " + attr->getIdentifier() + ";" + CR;
 		    return result;
         }
 
@@ -192,13 +192,18 @@ namespace isadt{
             //TODO: imple later
             std::string outStr = "";
 		    std::ofstream outSrcFile;
-		    std::string tempFileName;
+		    std::string tempFileName = proc->getProcName() + ".cpp";
+			std::cout << "genSrcInclude" << std::endl;
 		    outStr += this->generateSrcIncludes(proc);
+			outStr += this->generateStateDef(proc);
+			std::cout << "genSrcMethod" << std::endl;
 		    outStr += this->generateSrcMethods(proc);
+			
+			std::cout << "genSrcMain" << std::endl;
 		    outStr += this->generateMain(proc);
 
-
-		    outSrcFile.open(path + "\\generatedSrc" + "\\" + tempFileName, std::ofstream::app | std::ostream::out);
+			std::cout << outStr << std::endl;
+		    outSrcFile.open(path + "/generatedSrc" + "/" + tempFileName, std::ofstream::out | std::ostream::out);
 		    outSrcFile << outStr << std::endl;
 		    outSrcFile.close();
         }
@@ -214,7 +219,7 @@ namespace isadt{
 		    	defs += "#define STATE__" + v->getName() + " " + std::to_string(i) + CR;
 		    	i++;
 		    }
-		    defs += "#define STATE__STOP__STATE " + std::to_string(i);
+		    defs += "#define STATE__STOP__STATE " + std::to_string(i) + "\n";
 		    return defs;
         }
         
@@ -222,7 +227,7 @@ namespace isadt{
 		{
 			//TODO: add path latter
 			std::string headerPath;
-			std::string srcIncludeStr = "#include \"" + headerPath + "\\" + proc->getProcName() + ".h\n\"";
+			std::string srcIncludeStr = "#include \"" + headerPath + ".\\generatedHeader\\" + proc->getProcName() + ".h\"\n";
 			return srcIncludeStr;
 		}
 
@@ -269,11 +274,12 @@ namespace isadt{
 		{
 			std::string outStr = "";
 			// current state 
-			outStr += "int __currentState = STATE__START__STATE";
+			outStr += "int __currentState = STATE__START__STATE;\n";
 			
 			outStr += "int main(int argc, char** argv) {\n";
 			outStr += generateSMLoop(proc);
 			outStr += "}\n";
+			return outStr;
 		}
 
         //std::string  CCodeGenerator::generateGuardVarsDef(Process* proc);
@@ -288,6 +294,7 @@ namespace isadt{
 			outStr += "\t\tdefault: break;\n";
 			outStr += "\t}\n";
 			outStr += "}\n";
+
 			return outStr;
 		}
 
@@ -297,21 +304,29 @@ namespace isadt{
 			std::string caseTab = "\t\t";
 			std::string caseBodyTab = "\t\t\t";
 			for(Vertex* v : sm->getVertices()){
+				
+				std::cout << "vertex " + v->getName() << std::endl;
 				casesBody += (caseTab + "STATE__" + v->getName() + ":") + CR;
 				bool elseIf = false;
 				for(Edge* e : sm->getEdges()){
-					if(e->getFromVertex() == v){
+					std::cout << "edge loop" << std::endl;
+					if(!e->getFromVertex()->getName().compare(v->getName())){
 						// if the edge starts from v
 						// makesure Make sure guard to string method
-						casesBody += (caseBodyTab + (elseIf ? "else if(" : "if(") + e->getGuard()->to_stirng() + "){") + CR;
+						std::cout << "here" << std::endl;
+						casesBody += (caseBodyTab + (elseIf ? "else if(" : "if(") + e->getGuard()->to_string() + "){") + CR;
 						elseIf = true;
 						for(Action* a : e->getActions()){
-							casesBody += TAB + (caseBodyTab + a->to_stirng() + ";") + CR;
+							casesBody += TAB + (caseBodyTab + a->to_string() + ";") + CR;
 						}
 						casesBody += (caseBodyTab + "}") + CR;
 					}
+					
+					std::cout << "edge loop end" << std::endl;
 				}
 			}
+			std::cout << "endGenStateBehave" << std::endl;
+			return casesBody;
 		}
         /*-------------Generate UserTypes-------------*/
 		
@@ -328,7 +343,7 @@ namespace isadt{
 				for(Attribute* a : u->getParameters()){
 					outStr += "\t\t" + (a->getType()->getName() + " " + a->getIdentifier()) + "\n";
 				}
-				outStr += "}\n";
+				outStr += "};\n";
 			}
 			outUserTypeFile.open(path + "\\" + fileName);
 			outUserTypeFile << outStr << std::endl;

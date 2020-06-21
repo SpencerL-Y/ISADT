@@ -17,7 +17,9 @@ namespace isadt{
         this->model_ = model;
     }
     Attribute* Process::mkAttribute(Type* type, const string& name){
-
+        Attribute* attr = new Attribute(type, name);
+        this->attributes_.push_front(attr);
+        return attr;
     }
     Method* Process::mkMethod(const string& name, Type* returnType, list<Attribute*> parameters){
         for(Method* m : this->methods_){
@@ -26,7 +28,7 @@ namespace isadt{
                 return NULL;
             }
         }
-        Method* m = new Method(name, returnType, parameters, nullptr, "");
+        Method* m = new Method(name, returnType, parameters, "0", "");
         this->methods_.push_back(m);
         return m;
     }

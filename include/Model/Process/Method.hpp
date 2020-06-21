@@ -9,30 +9,19 @@
 #define Model_Method_hpp 
 #include <list>
 #include "Attribute.hpp"
+#include "MethodBase.hpp"
 using std::list;
 
 namespace isadt {
     /// \brief the method of process.
-    class Method {
+    class Method : MethodBase{
     public:
         Method();
 
-        Method(const string& name, 
-               Type* returnType, 
-               const list<Attribute*>& parameters,
-               const string& algorithmId,
+        Method(const string& algorithmId,
                const string& userCode);
 
         ~Method();
-
-        const string& getName() const;
-        void setName(const string& name) ;
-
-        Type* getReturnType() const;
-        void setReturnType(Type* returnType);
-
-        const list<Attribute*>& getParameters() const;
-        void setParameters(const list<Attribute*>& parameters);
 
         const string& getAlgorithmId() const;
         void setAlgorithmId(const string& algorithmId);
@@ -43,9 +32,6 @@ namespace isadt {
 
         const string& getName();
     private:
-        string name_;                    //< the method name.
-        Type* returnType_;               //< the return data type.
-        list<Attribute*> parameters_;    //< the parameters.
         string algorithmId_;             //< the algorithm identifier. encryption and decryption: not null ==> .
         string userCode_;                //< the user insertion code.
     };

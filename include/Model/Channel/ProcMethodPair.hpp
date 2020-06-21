@@ -11,7 +11,6 @@ namespace isadt{
         Process* proc_;
         //MAKESURE 
         CommMethod* commMethod_;
-        bool privacy_;
     };
 
 }
